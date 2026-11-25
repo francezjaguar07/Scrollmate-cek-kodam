@@ -1,0 +1,802 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>Cek Khodam</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,600&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #faf3e7;
+        --bg-dot: #efdcba;
+        --card: #fffdf8;
+        --card-border: #ecd9b8;
+        --ink: #3a2415;
+        --ink-soft: #8a6a45;
+        --accent: #d64933;
+        --accent-deep: #b2341f;
+        --accent-soft: #fdeadd;
+        --track: #f3e3c8;
+        --gold: #e39a00;
+        --shadow: 0 18px 40px rgba(178, 52, 31, 0.16);
+        --input-bg: #fffaf1;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #1d130d;
+          --bg-dot: #33200f;
+          --card: #2c1c12;
+          --card-border: #57391d;
+          --ink: #ffeeda;
+          --ink-soft: #d3a97e;
+          --accent: #ff8a5c;
+          --accent-deep: #ffb08c;
+          --accent-soft: #472413;
+          --track: #472a15;
+          --gold: #ffc14d;
+          --shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+          --input-bg: #241509;
+        }
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        font-family: "Nunito", system-ui, sans-serif;
+        background: var(--bg);
+        background-image: radial-gradient(var(--bg-dot) 1.6px, transparent 1.7px);
+        background-size: 26px 26px;
+        color: var(--ink);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+      button, input { font-family: inherit; }
+      button, [role="button"], input:not([type="checkbox"], [type="radio"]) { min-height: 2.75rem; }
+
+      /* ---------- floating background sparkles ---------- */
+      .bg-stars { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+      .bg-stars svg {
+        position: absolute;
+        color: var(--gold);
+        opacity: 0.22;
+        animation: floatUp linear infinite;
+      }
+      @keyframes floatUp {
+        0% { transform: translateY(15vh) rotate(-10deg); }
+        50% { transform: translateY(-45vh) rotate(12deg); }
+        100% { transform: translateY(-110vh) rotate(-10deg); }
+      }
+
+      .wrap {
+        position: relative;
+        z-index: 1;
+        max-width: 560px;
+        margin: 0 auto;
+        padding: 40px 18px 56px;
+      }
+
+      /* ---------- header ---------- */
+      header { text-align: center; margin-bottom: 26px; }
+      .logo-star {
+        width: 74px; height: 74px;
+        margin: 0 auto 8px;
+        display: grid; place-items: center;
+        animation: glowPulse 2.2s ease-in-out infinite;
+      }
+      .logo-star svg { width: 74px; height: 74px; color: var(--gold); filter: drop-shadow(0 8px 16px rgba(227, 154, 0, 0.4)); }
+      @keyframes glowPulse {
+        0%, 100% { transform: scale(1) rotate(-4deg); }
+        50% { transform: scale(1.12) rotate(5deg); }
+      }
+      h1 {
+        font-family: "Fredoka", sans-serif;
+        font-weight: 700;
+        font-size: clamp(2.3rem, 9vw, 3.4rem);
+        line-height: 1.05;
+        margin: 0 0 8px;
+        letter-spacing: 0.5px;
+      }
+      h1 .pink { color: var(--accent); }
+      .tagline { margin: 0; font-size: 1.05rem; font-weight: 600; color: var(--ink-soft); }
+      .tagline b { color: var(--ink); }
+
+      /* ---------- card ---------- */
+      .card {
+        background: var(--card);
+        border: 2px solid var(--card-border);
+        border-radius: 28px;
+        box-shadow: var(--shadow);
+        padding: 28px 24px 26px;
+      }
+      .field label {
+        display: block;
+        font-family: "Fredoka", sans-serif;
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 8px;
+      }
+      .field input {
+        width: 100%;
+        padding: 13px 16px;
+        font-size: 1.08rem;
+        font-weight: 700;
+        color: var(--ink);
+        background: var(--input-bg);
+        border: 2px solid var(--card-border);
+        border-radius: 16px;
+        outline: none;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      }
+      .field input::placeholder { color: var(--ink-soft); font-weight: 600; opacity: 0.75; }
+      .field input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px var(--accent-soft);
+      }
+      .field.shake input { animation: shake 0.4s ease; border-color: var(--accent-deep); }
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-7px); }
+        50% { transform: translateX(6px); }
+        75% { transform: translateX(-4px); }
+      }
+      .connector {
+        display: flex; align-items: center; gap: 12px;
+        margin: 16px 0;
+      }
+      .connector .line { flex: 1; border-top: 2px dashed var(--card-border); }
+      .connector .mid-star { width: 30px; height: 30px; color: var(--gold); flex: none; }
+
+      .btn-main {
+        width: 100%;
+        margin-top: 22px;
+        padding: 15px 20px;
+        font-family: "Fredoka", sans-serif;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #fff;
+        background: var(--accent);
+        border: none;
+        border-radius: 18px;
+        cursor: pointer;
+        box-shadow: 0 10px 22px rgba(214, 73, 51, 0.35);
+        transition: transform 0.12s ease, background 0.15s ease;
+        display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      }
+      .btn-main:hover { background: var(--accent-deep); }
+      .btn-main:active { transform: scale(0.97); }
+      .btn-main:disabled { opacity: 0.75; cursor: wait; transform: none; }
+      .btn-main svg { width: 22px; height: 22px; }
+      .btn-main.pulsing svg { animation: glowPulse 0.7s ease-in-out infinite; }
+
+      .error-msg {
+        display: none;
+        margin: 14px 0 0;
+        text-align: center;
+        font-weight: 800;
+        color: var(--accent-deep);
+        font-size: 0.98rem;
+      }
+      .error-msg.show { display: block; }
+
+      /* ---------- result ---------- */
+      .result { display: none; margin-top: 26px; position: relative; }
+      .result.show { display: block; animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+      @keyframes popIn {
+        from { opacity: 0; transform: scale(0.92) translateY(14px); }
+        to { opacity: 1; transform: scale(1) translateY(0); }
+      }
+      .for-who {
+        text-align: center;
+        margin: 0 0 12px;
+        font-weight: 800; color: var(--ink-soft);
+        letter-spacing: 0.12em; font-size: 0.8rem; text-transform: uppercase;
+        overflow-wrap: anywhere;
+      }
+      .portrait {
+        width: min(280px, 78vw);
+        margin: 0 auto 16px;
+        border-radius: 24px;
+        overflow: hidden;
+        border: 3px solid var(--card-border);
+        box-shadow: 0 14px 30px rgba(58, 36, 21, 0.18);
+        line-height: 0;
+      }
+      .portrait svg { width: 100%; height: auto; display: block; }
+      .rarity-row { text-align: center; margin-bottom: 8px; }
+      .rarity-chip {
+        display: inline-block;
+        font-family: "Fredoka", sans-serif;
+        font-weight: 600; font-size: 0.85rem;
+        color: #7a4d00;
+        background: #ffe9b0;
+        border: 2px solid var(--gold);
+        padding: 4px 14px;
+        border-radius: 999px;
+      }
+      @media (prefers-color-scheme: dark) {
+        .rarity-chip { color: #ffd97a; background: #4a3405; }
+      }
+      .khodam-name {
+        text-align: center;
+        font-family: "Fredoka", sans-serif;
+        font-weight: 700;
+        font-size: clamp(1.7rem, 7.4vw, 2.3rem);
+        line-height: 1.15;
+        margin: 0 0 2px;
+        color: var(--accent);
+        overflow-wrap: anywhere;
+      }
+      .khodam-epithet {
+        text-align: center;
+        margin: 0 0 14px;
+        font-family: "Fredoka", sans-serif;
+        font-weight: 500; font-size: 1.05rem;
+        color: var(--ink);
+      }
+      .khodam-desc { text-align: center; margin: 0 auto 22px; max-width: 44ch; font-size: 1.02rem; line-height: 1.55; color: var(--ink-soft); font-weight: 600; }
+
+      /* ---------- zodiac ---------- */
+      .zodiac {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        border: 2px dashed var(--card-border);
+        border-radius: 18px;
+        padding: 14px 16px;
+        margin-bottom: 22px;
+        text-align: left;
+      }
+      .zodiac-glyph {
+        flex: none;
+        width: 58px; height: 58px;
+        border-radius: 50%;
+        background: var(--accent-soft);
+        color: var(--accent-deep);
+        display: grid; place-items: center;
+        font-size: 1.9rem;
+        line-height: 1;
+      }
+      .zodiac-body { min-width: 0; }
+      .zodiac-title {
+        font-family: "Fredoka", sans-serif; font-weight: 600; font-size: 1.08rem;
+        margin: 0 0 2px;
+      }
+      .zodiac-title .zodiac-dates { color: var(--ink-soft); font-size: 0.88rem; font-weight: 500; }
+      .zodiac-trait { margin: 0; font-weight: 600; font-size: 0.95rem; line-height: 1.5; color: var(--ink-soft); }
+
+      .scores { display: grid; gap: 14px; margin-bottom: 20px; }
+      .score-row { display: grid; grid-template-columns: 118px 1fr 44px; align-items: center; gap: 12px; }
+      .score-row .name { font-weight: 800; font-size: 0.92rem; }
+      .score-row .val { font-weight: 800; font-size: 0.92rem; text-align: right; font-variant-numeric: tabular-nums; }
+      .bar { height: 12px; background: var(--track); border-radius: 999px; overflow: hidden; }
+      .bar i {
+        display: block; height: 100%; width: 0;
+        background: var(--accent);
+        border-radius: 999px;
+        transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .bar.gold i { background: var(--gold); }
+
+      .fact {
+        background: var(--accent-soft);
+        border-radius: 18px;
+        padding: 16px 18px;
+        margin-bottom: 22px;
+      }
+      .fact .fact-title {
+        font-family: "Fredoka", sans-serif; font-weight: 600; font-size: 0.95rem;
+        color: var(--accent-deep); margin: 0 0 4px;
+        display: flex; align-items: center; gap: 7px;
+      }
+      .fact .fact-title svg { width: 18px; height: 18px; flex: none; }
+      .fact p { margin: 0; font-weight: 600; line-height: 1.55; font-size: 0.99rem; }
+
+      .result-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+      .btn-ghost {
+        flex: 1 1 140px;
+        padding: 12px 14px;
+        font-family: "Fredoka", sans-serif;
+        font-weight: 600; font-size: 1rem;
+        color: var(--accent-deep);
+        background: transparent;
+        border: 2px solid var(--card-border);
+        border-radius: 16px;
+        cursor: pointer;
+        transition: background 0.15s ease, transform 0.12s ease;
+      }
+      .btn-ghost:hover { background: var(--accent-soft); }
+      .btn-ghost:active { transform: scale(0.97); }
+      .copied-note { text-align: center; font-weight: 800; color: var(--accent-deep); font-size: 0.92rem; margin: 12px 0 0; min-height: 1.2em; }
+
+      footer { text-align: center; margin-top: 30px; color: var(--ink-soft); font-weight: 600; font-size: 0.92rem; line-height: 1.6; }
+      footer svg { width: 14px; height: 14px; color: var(--gold); vertical-align: -2px; }
+
+      /* burst sparkles on reveal */
+      .burst-star { position: absolute; pointer-events: none; color: var(--gold); z-index: 5; }
+
+      @media (prefers-reduced-motion: reduce) {
+        .logo-star, .bg-stars svg, .btn-main.pulsing svg { animation: none; }
+        .result.show { animation: none; }
+        .bar i { transition: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-stars" id="bgStars" aria-hidden="true"></div>
+
+    <div class="wrap">
+      <header>
+        <div class="logo-star" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.5l2.6 7.9 7.9 2.6-7.9 2.6L12 22.5l-2.6-7.9-7.9-2.6 7.9-2.6z"/></svg>
+        </div>
+        <h1>Cek <span class="pink">Khodam</span></h1>
+        <p class="tagline">Masukin nama sama tanggal lahirmu, biar <b>alam gaib</b> yang nentuin khodam absurd apa yang selama ini jagain kamu — sekalian dibaca juga zodiakmu.</p>
+      </header>
+
+      <main>
+        <form class="card" id="khodamForm" novalidate>
+          <div class="field" id="fieldName">
+            <label for="nameInput">Nama kamu</label>
+            <input id="nameInput" type="text" placeholder="cth: Nadia" autocomplete="off" maxlength="30" />
+          </div>
+
+          <div class="connector" aria-hidden="true">
+            <span class="line"></span>
+            <svg class="mid-star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.5l2.6 7.9 7.9 2.6-7.9 2.6L12 22.5l-2.6-7.9-7.9-2.6 7.9-2.6z"/></svg>
+            <span class="line"></span>
+          </div>
+
+          <div class="field" id="fieldBirth">
+            <label for="birthInput">Tanggal lahir</label>
+            <input id="birthInput" type="date" />
+          </div>
+
+          <button type="submit" class="btn-main" id="submitBtn">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.5l2.6 7.9 7.9 2.6-7.9 2.6L12 22.5l-2.6-7.9-7.9-2.6 7.9-2.6z"/></svg>
+            <span id="submitText">Panggil Khodamku</span>
+          </button>
+          <p class="error-msg" id="errorMsg" role="alert"></p>
+
+          <section class="result" id="result" aria-live="polite">
+            <p class="for-who">Khodam penjaga <span id="forWho"></span> adalah…</p>
+            <div class="portrait" id="portrait"></div>
+            <div class="rarity-row"><span class="rarity-chip" id="rarityChip"></span></div>
+            <h2 class="khodam-name" id="khodamName"></h2>
+            <p class="khodam-epithet" id="khodamEpithet"></p>
+            <p class="khodam-desc" id="khodamDesc"></p>
+
+            <div class="zodiac">
+              <div class="zodiac-glyph" id="zodiacGlyph" aria-hidden="true"></div>
+              <div class="zodiac-body">
+                <p class="zodiac-title">Zodiak: <span id="zodiacName"></span> <span class="zodiac-dates" id="zodiacDates"></span></p>
+                <p class="zodiac-trait" id="zodiacTrait"></p>
+              </div>
+            </div>
+
+            <div class="scores">
+              <div class="score-row">
+                <span class="name">Kekuatan Gaib</span>
+                <div class="bar"><i id="barPower"></i></div>
+                <span class="val" id="valPower">0%</span>
+              </div>
+              <div class="score-row">
+                <span class="name">Tingkat Absurd</span>
+                <div class="bar gold"><i id="barAbsurd"></i></div>
+                <span class="val" id="valAbsurd">0%</span>
+              </div>
+              <div class="score-row">
+                <span class="name">Kesetiaan</span>
+                <div class="bar"><i id="barLoyal"></i></div>
+                <span class="val" id="valLoyal">0%</span>
+              </div>
+            </div>
+
+            <div class="fact">
+              <p class="fact-title">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.4 6.2L21 9.3l-5 4.4 1.6 6.5L12 16.7l-5.6 3.5L8 13.7 3 9.3l6.6-1.1z"/></svg>
+                Fakta Khodam
+              </p>
+              <p id="factText"></p>
+            </div>
+
+            <div class="result-actions">
+              <button type="button" class="btn-ghost" id="copyBtn">Salin Hasil</button>
+              <button type="button" class="btn-ghost" id="resetBtn">Cek Orang Lain</button>
+            </div>
+            <p class="copied-note" id="copiedNote"></p>
+          </section>
+        </form>
+      </main>
+
+      <footer>
+        Dibuat buat seru-seruan aja ya
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.5l2.6 7.9 7.9 2.6-7.9 2.6L12 22.5l-2.6-7.9-7.9-2.6 7.9-2.6z"/></svg>
+        — khodam beneran mah nggak ada yang tahu, yang jelas khodam absurd ini sekarang resmi jagain kamu.
+      </footer>
+    </div>
+
+    <script>
+      (function () {
+        var STAR = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.5l2.6 7.9 7.9 2.6-7.9 2.6L12 22.5l-2.6-7.9-7.9-2.6 7.9-2.6z"/></svg>';
+        var SPARK = '<path d="M0 -10 L2.6 -2.6 L10 0 L2.6 2.6 L0 10 L-2.6 2.6 L-10 0 L-2.6 -2.6 Z" fill="#e39a00"/>';
+
+        /* ---------- background floating sparkles ---------- */
+        var bg = document.getElementById('bgStars');
+        var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!reduced) {
+          for (var i = 0; i < 12; i++) {
+            var holder = document.createElement('div');
+            holder.innerHTML = STAR;
+            var svg = holder.firstChild;
+            var size = 12 + Math.random() * 22;
+            svg.style.width = size + 'px';
+            svg.style.left = (Math.random() * 96) + 'vw';
+            svg.style.bottom = '-60px';
+            svg.style.animationDuration = (12 + Math.random() * 14) + 's';
+            svg.style.animationDelay = (-Math.random() * 20) + 's';
+            bg.appendChild(svg);
+          }
+        }
+
+        /* ---------- zodiac data ---------- */
+        var ZODIACS = [
+          { name: 'Capricorn', glyph: '♑', dates: '22 Des – 19 Jan', from: [12, 22], to: [1, 19], trait: 'Elemen tanah. Ambisius dan tahan banting — santai di luar, tapi di kepala sudah ada rencana lima tahun ke depan.' },
+          { name: 'Aquarius', glyph: '♒', dates: '20 Jan – 18 Feb', from: [1, 20], to: [2, 18], trait: 'Elemen udara. Paling anti-mainstream: idenya selalu selangkah lebih aneh dari orang lain, dan biasanya malah bener.' },
+          { name: 'Pisces', glyph: '♓', dates: '19 Feb – 20 Mar', from: [2, 19], to: [3, 20], trait: 'Elemen air. Perasa dan jago ngayal — bisa nangis gara-gara lagu, terus lima menit kemudian ketawa lagi.' },
+          { name: 'Aries', glyph: '♈', dates: '21 Mar – 19 Apr', from: [3, 21], to: [4, 19], trait: 'Elemen api. Gas dulu, mikir belakangan. Semangatnya nular, sabarnya yang kadang nggak ikut nular.' },
+          { name: 'Taurus', glyph: '♉', dates: '20 Apr – 20 Mei', from: [4, 20], to: [5, 20], trait: 'Elemen tanah. Setia, keras kepala, dan nggak bisa diganggu pas lagi makan enak.' },
+          { name: 'Gemini', glyph: '♊', dates: '21 Mei – 20 Jun', from: [5, 21], to: [6, 20], trait: 'Elemen udara. Satu orang, dua kepribadian: hari ini pendiam, besoknya jadi MC acara keluarga.' },
+          { name: 'Cancer', glyph: '♋', dates: '21 Jun – 22 Jul', from: [6, 21], to: [7, 22], trait: 'Elemen air. Kelihatan lembut, tapi ingatannya soal siapa yang pernah nyakitin awetnya luar biasa.' },
+          { name: 'Leo', glyph: '♌', dates: '23 Jul – 22 Agu', from: [7, 23], to: [8, 22], trait: 'Elemen api. Lahir buat jadi pusat perhatian — masuk ruangan aja auranya sudah kayak lampu panggung.' },
+          { name: 'Virgo', glyph: '♍', dates: '23 Agu – 22 Sep', from: [8, 23], to: [9, 22], trait: 'Elemen tanah. Perfeksionis yang bisa nemuin satu typo di tengah novel. Detail kecil nggak pernah lolos.' },
+          { name: 'Libra', glyph: '♎', dates: '23 Sep – 22 Okt', from: [9, 23], to: [10, 22], trait: 'Elemen udara. Paling susah milih menu, tapi paling jago menengahi kalau teman-temannya lagi berantem.' },
+          { name: 'Scorpio', glyph: '♏', dates: '23 Okt – 21 Nov', from: [10, 23], to: [11, 21], trait: 'Elemen air. Misterius dan pendendam elegan — sekali disakitin, namamu masuk arsip permanen.' },
+          { name: 'Sagitarius', glyph: '♐', dates: '22 Nov – 21 Des', from: [11, 22], to: [12, 21], trait: 'Elemen api. Jiwa petualang yang omongannya jujur sampai kadang lupa disaring dulu.' }
+        ];
+
+        function zodiacFor(month, day) {
+          for (var i = 0; i < ZODIACS.length; i++) {
+            var z = ZODIACS[i];
+            var afterFrom = month > z.from[0] || (month === z.from[0] && day >= z.from[1]);
+            var beforeTo = month < z.to[0] || (month === z.to[0] && day <= z.to[1]);
+            if (z.from[0] <= z.to[0]) {
+              if (afterFrom && beforeTo) return z;
+            } else if (afterFrom || beforeTo) {
+              return z;
+            }
+          }
+          return ZODIACS[0];
+        }
+
+        /* ---------- khodam data: portrait illustration + explanation ---------- */
+        var KHODAMS = [
+          {
+            name: 'Khodam Kecoa Terbang',
+            epithet: 'Teror dari Kolong Lemari',
+            rarity: 'Legendaris',
+            desc: 'Makhluk paling ditakuti se-Indonesia. Dia selalu muncul di momen paling nggak tepat — pas kamu lagi santai, lagi makan, lagi sok berani — lalu terbang lurus ke arah muka tanpa aba-aba.',
+            fact: 'Ilmuwan sampai sekarang belum bisa menjelaskan kenapa kecoa terbang selalu, selalu mengarah ke manusia. Khodam ini tahu alasannya, tapi dia nggak mau kasih tahu.',
+            svg: '<svg viewBox="0 0 200 200" role="img" aria-label="Ilustrasi kecoa terbang"><circle cx="100" cy="100" r="88" fill="#fdeeda"/><path d="M14 66 Q30 58 42 66 M10 96 Q26 88 40 96" stroke="#c98a4b" stroke-width="4" fill="none" stroke-linecap="round"/><ellipse cx="58" cy="78" rx="34" ry="17" transform="rotate(-32 58 78)" fill="#ffffff" opacity="0.65" stroke="#d9c8a9" stroke-width="2"/><ellipse cx="144" cy="76" rx="34" ry="17" transform="rotate(32 144 76)" fill="#ffffff" opacity="0.65" stroke="#d9c8a9" stroke-width="2"/><path d="M84 44 Q70 22 52 16 M116 44 Q130 22 148 16" stroke="#6b4423" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M76 96 L50 112 M74 122 L48 132 M124 96 L150 112 M126 122 L152 132" stroke="#6b4423" stroke-width="5" stroke-linecap="round"/><ellipse cx="100" cy="106" rx="34" ry="52" fill="#8a5a2b"/><ellipse cx="100" cy="66" rx="24" ry="18" fill="#a06a33"/><path d="M100 84 L100 152" stroke="#6b4423" stroke-width="3"/><path d="M76 104 Q100 96 124 104 M74 128 Q100 120 126 128" stroke="#6b4423" stroke-width="3" fill="none"/><circle cx="91" cy="62" r="5" fill="#241203"/><circle cx="109" cy="62" r="5" fill="#241203"/><path d="M92 74 Q100 79 108 74" stroke="#241203" stroke-width="3.5" fill="none" stroke-linecap="round"/><ellipse cx="80" cy="72" rx="6" ry="4" fill="#ff9fb2" opacity="0.8"/><ellipse cx="120" cy="72" rx="6" ry="4" fill="#ff9fb2" opacity="0.8"/><g transform="translate(168 158) scale(0.8)">' + SPARK + '</g></svg>'
+          },
+          {
+            name: 'Khodam Lele Berkacamata',
+            epithet: 'Intelektual dari Kolam Lumpur',
+            rarity: 'Langka',
+            desc: 'Lele paling pintar se-kolam. Kumisnya panjang, kacamatanya tebal, dan dia sudah membaca semua rahasia hidupmu dari dasar lumpur. Jangan remehkan: yang diam-diam begini biasanya yang paling tahu segalanya.',
+            fact: 'Kacamata itu bukan gaya-gayaan. Lele ini butuh buat membaca niat orang dari jauh — termasuk niatmu yang bilang "cuma lihat-lihat doang" di warung makan.',
+            svg: '<svg viewBox="0 0 200 200" role="img" aria-label="Ilustrasi lele memakai kacamata"><circle cx="100" cy="100" r="88" fill="#e0f2f1"/><path d="M22 150 Q40 142 58 150 Q76 158 94 150 Q112 142 130 150 Q148 158 166 150" stroke="#7cc4e8" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.8"/><path d="M100 36 Q128 62 128 104 Q128 150 100 168 Q72 150 72 104 Q72 62 100 36 Z" fill="#7d8fa3"/><path d="M100 36 Q128 62 128 104 Q128 150 100 168 Q72 150 72 104 Q72 62 100 36 Z" fill="none" stroke="#5b7186" stroke-width="3"/><ellipse cx="100" cy="140" rx="18" ry="22" fill="#aebfd0"/><path d="M128 84 Q152 74 158 92 Q150 104 130 102 M72 84 Q48 74 42 92 Q50 104 70 102" fill="#667d94"/><path d="M84 118 Q58 128 38 122 M84 128 Q62 142 44 140 M116 118 Q142 128 162 122 M116 128 Q138 142 156 140" stroke="#5b7186" stroke-width="3.5" fill="none" stroke-linecap="round"/><circle cx="86" cy="88" r="13" fill="none" stroke="#20303a" stroke-width="3.5"/><circle cx="114" cy="88" r="13" fill="none" stroke="#20303a" stroke-width="3.5"/><path d="M99 88 L101 88 M73 86 L62 80 M127 86 L138 80" stroke="#20303a" stroke-width="3.5" stroke-linecap="round"/><circle cx="86" cy="89" r="4" fill="#10222e"/><circle cx="114" cy="89" r="4" fill="#10222e"/><path d="M92 106 Q100 111 108 106" stroke="#10222e" stroke-width="3.5" fill="none" stroke-linecap="round"/><ellipse cx="72" cy="102" rx="6" ry="4" fill="#ff9fb2" opacity="0.85"/><ellipse cx="128" cy="102" rx="6" ry="4" fill="#ff9fb2" opacity="0.85"/><circle cx="52" cy="52" r="4" fill="#a5d8ff"/><circle cx="152" cy="40" r="3" fill="#a5d8ff"/><g transform="translate(166 130) scale(0.7)">' + SPARK + '</g></svg>'
+          },
+          {
+            name: 'Khodam Cicak Obesitas',
+            epithet: 'Sultan Dinding yang Susah Gerak',
+            rarity: 'Langka',
+            desc: 'Dulu dia lincah mengejar nyamuk, sekarang nyamuknya yang mengejar dia. Cicak ini terlalu nyaman hidupnya — perut membulat, gerak makin lambat, tapi posisinya di dinding nggak pernah tergantikan.',
+            fact: 'Dia sudah nggak bisa bunyi "ckckck" dengan lincah lagi, sekarang bunyinya lebih berat: "ck… ck…" sambil ngos-ngosan. Tetap setia jaga dinding rumahmu.',
+            svg: '<svg viewBox="0 0 200 200" role="img" aria-label="Ilustrasi cicak gemuk menempel di dinding"><circle cx="100" cy="100" r="88" fill="#f3e8d2"/><ellipse cx="100" cy="112" rx="52" ry="48" fill="#a9c46b"/><ellipse cx="100" cy="126" rx="34" ry="30" fill="#c4d68d"/><circle cx="100" cy="58" r="24" fill="#a9c46b"/><path d="M56 92 L34 80 M54 126 L30 132 M146 92 L168 80 M148 126 L172 132" stroke="#a9c46b" stroke-width="9" stroke-linecap="round"/><circle cx="32" cy="79" r="6" fill="#a9c46b"/><circle cx="28" cy="133" r="6" fill="#a9c46b"/><circle cx="170" cy="79" r="6" fill="#a9c46b"/><circle cx="174" cy="133" r="6" fill="#a9c46b"/><path d="M148 148 Q168 168 150 184" stroke="#a9c46b" stroke-width="10" fill="none" stroke-linecap="round"/><circle cx="84" cy="112" r="4" fill="#8aa653"/><circle cx="118" cy="104" r="3.4" fill="#8aa653"/><circle cx="106" cy="132" r="3" fill="#8aa653"/><circle cx="91" cy="54" r="5" fill="#26331a"/><circle cx="109" cy="54" r="5" fill="#26331a"/><path d="M92 66 Q100 71 108 66" stroke="#26331a" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M108 68 Q115 74 122 71" stroke="#ff8fab" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="80" cy="64" rx="6" ry="4" fill="#ffb3c1" opacity="0.85"/><ellipse cx="120" cy="64" rx="6" ry="4" fill="#ffb3c1" opacity="0.85"/><text x="28" y="36" font-family="Nunito, sans-serif" font-weight="800" font-style="italic" font-size="13" fill="#8a6a45">ck… ck…</text></svg>'
+          },
+          {
+            name: 'Khodam Ayam Pensiunan',
+            epithet: 'Veteran Kokok Subuh',
+            rarity: 'Umum',
+            desc: 'Sudah ribuan subuh dia bangunkan satu kampung, sekarang saatnya dia santai. Ayam pensiunan ini nggak lagi berkokok jam 4 pagi — dia bangun jam 9, minum kopi, dan nostalgia soal masa jayanya.',
+            fact: 'Dana pensiunnya dibayar dalam bentuk jagung rebus dan tempat bertengger paling empuk. Katanya, kokok terakhirnya dulu terdengar sampai tiga RT.',
+            svg: '<svg viewBox="0 0 200 200" role="img" aria-label="Ilustrasi ayam tua yang sudah pensiun"><circle cx="100" cy="100" r="88" fill="#fff1d6"/><ellipse cx="98" cy="112" rx="46" ry="42" fill="#ffffff" stroke="#e3d9c8" stroke-width="3"/><circle cx="98" cy="62" r="24" fill="#ffffff" stroke="#e3d9c8" stroke-width="3"/><path d="M84 44 Q80 30 90 32 Q94 22 100 30 Q108 22 110 33 Q120 30 114 44" fill="#e03131"/><path d="M92 84 Q98 96 104 84 Q102 100 98 102 Q94 100 92 84 Z" fill="#e03131"/><path d="M118 62 L138 68 L118 74 Z" fill="#f2a93b"/><path d="M56 100 Q34 92 36 74 Q52 76 60 88" fill="#f4f6f8" stroke="#e3d9c8" stroke-width="2.5"/><path d="M140 108 Q160 122 154 142 Q138 134 134 118" fill="#f4f6f8" stroke="#e3d9c8" stroke-width="2.5"/><path d="M88 152 L88 168 M110 152 L110 168 M80 168 L96 168 M102 168 L118 168" stroke="#f2a93b" stroke-width="4" stroke-linecap="round"/><circle cx="90" cy="60" r="4.5" fill="#3a2415"/><circle cx="107" cy="60" r="4.5" fill="#3a2415"/><path d="M84 52 Q90 47 96 52 M101 52 Q107 47 113 52" stroke="#b9b0a0" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M40 178 L160 178" stroke="#b08954" stroke-width="5" stroke-linecap="round"/><path d="M150 118 L162 160" stroke="#8a6a45" stroke-width="4" stroke-linecap="round"/><circle cx="149" cy="114" r="5" fill="#8a6a45"/><g transform="translate(34 40) scale(0.7)">' + SPARK + '</g></svg>'
+          },
+          {
+            name: 'Khodam Kambing Introvert',
+            epithet: 'Si Pendiam dari Kandang Sebelah',
+            rarity: 'Umum',
+            desc: 'Diajak kumpul kambing lain, dia milih pojokan kandang. Kambing introvert ini cuma "mbee" sekali sehari, itu pun pelan dan ke rumput. Tapi sekali kamu butuh teman diam yang nggak menghakimi, dia orangnya — eh, kambingnya.',
+            fact: 'Baterai sosialnya habis cuma gara-gara disapa dua kambing sekaligus. Dia butuh waktu sendiri minimal tiga jam buat pulih dari obrolan basa-basi.',
+            svg: '<svg viewBox="0 0 200 200" role="img" aria-label="Ilustrasi kambing pendiam memakai hoodie"><circle cx="100" cy="100" r="88" fill="#eceff3"/><ellipse cx="100" cy="122" rx="44" ry="36" fill="#f4f1ea"/><path d="M60 84 Q52 50 84 40 L116 40 Q148 50 140 84 Q148 108 128 122 L72 122 Q52 108 60 84 Z" fill="#868e96"/><path d="M72 118 Q100 104 128 118 L128 130 L72 130 Z" fill="#868e96"/><ellipse cx="100" cy="86" rx="27" ry="30" fill="#f4f1ea"/><path d="M76 62 Q62 52 58 64 Q66 74 78 72 M124 62 Q138 52 142 64 Q134 74 122 72" fill="#e8e2d4"/><path d="M84 58 Q88 44 96 52 M116 58 Q112 44 104 52" stroke="#cbbfa5" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="89" cy="84" r="4.5" fill="#2e2a24"/><circle cx="111" cy="84" r="4.5" fill="#2e2a24"/><path d="M94 100 Q100 103 106 100" stroke="#2e2a24" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M92 108 Q100 116 108 108 L106 118 Q100 122 94 118 Z" fill="#e8e2d4"/><ellipse cx="76" cy="96" rx="6" ry="4" fill="#ffb3c1" opacity="0.8"/><ellipse cx="124" cy="96" rx="6" ry="4" fill="#ffb3c1" opacity="0.8"/><text x="160" y="52" font-family="Nunito, sans-serif" font-weight="800" font-size="15" fill="#868e96">…</text><g transform="translate(34 150) scale(0.65)">' + SPARK + '</g></svg>'
+          },
+          {
+            name: 'Khodam Bebek Kesurupan WiFi',
+            epithet: 'Penerima Sinyal dari Dimensi Lain',
+            rarity: 'Legendaris',
+            desc: 'Sejak tersambung ke WiFi tetangga yang nggak pakai password, bebek ini nggak pernah sama lagi. Matanya berputar, kepalanya miring 45 derajat, dan dia sekarang tahu semua password — termasuk password hidupmu.',
+            fact: 'Kalau bebek ini tiba-tiba diam dan menatap kosong, jangan diganggu: dia lagi buffering. Koneksi ke alam gaib memang kadang putus-nyambung.',
+            svg: '<svg viewBox="0 0 200 200" role="img" aria-label="Ilustrasi bebek dengan sinyal WiFi di atas kepalanya"><circle cx="100" cy="100" r="88" fill="#e3f6fd"/><path d="M76 34 Q100 16 124 34 M84 46 Q100 34 116 46" stroke="#2f7fc1" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="100" cy="56" r="4.5" fill="#2f7fc1"/><ellipse cx="100" cy="126" rx="46" ry="38" fill="#ffffff" stroke="#e3d9c8" stroke-width="3"/><circle cx="100" cy="82" r="26" fill="#ffffff" stroke="#e3d9c8" stroke-width="3"/><path d="M58 118 Q38 112 40 94 Q56 96 64 106 M142 118 Q162 112 160 94 Q144 96 136 106" fill="#f4f6f8" stroke="#e3d9c8" stroke-width="2.5"/><ellipse cx="100" cy="90" rx="13" ry="8" fill="#f2a93b"/><path d="M88 90 L112 90" stroke="#dd8a1d" stroke-width="2.5"/><path d="M86 76 L94 82 M94 76 L86 82 M106 76 L114 82 M114 76 L106 82" stroke="#3a2415" stroke-width="3" stroke-linecap="round"/><path d="M84 156 L84 168 M116 156 L116 168 M76 168 L92 168 M108 168 L124 168" stroke="#f2a93b" stroke-width="4" stroke-linecap="round"/><path d="M64 140 Q100 152 136 140" stroke="#ffe08a" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.7"/><g transform="translate(164 150) scale(0.75)">' + SPARK + '</g></svg>'
+          },
+          {
+            name: 'Khodam Ubur-Ubur Darat',
+            epithet: 'Pengembara Salah Habitat',
+            rarity: 'Langka',
+            desc: 'Harusnya dia melayang anggun di laut, tapi takdir menaruhnya di darat. Sekarang dia jalan tertatih pakai tentakel, kering kerontang, tapi tetap bersinar. Bukti hidup bahwa salah tempat bukan berarti salah hidup.',
+            fact: 'Setiap lima menit dia harus disiram air biar tetap semangat. Kamu juga gitu kan — bedanya sirmuannya kopi.',
+            svg: '<svg viewBox="0 0 200 200" role="img" aria-label="Ilustrasi ubur-ubur yang terdampar di darat"><circle cx="100" cy="100" r="88" fill="#fff3d6"/><path d="M20 168 Q50 158 80 168 Q110 178 140 168 Q165 160 182 168 L182 188 L20 188 Z" fill="#f2d492"/><path d="M62 104 Q58 130 64 146 M82 108 Q80 134 86 150 M100 110 L100 152 M118 108 Q120 134 114 150 M138 104 Q142 130 136 146" stroke="#ff8fab" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M52 102 Q52 52 100 52 Q148 52 148 102 Q136 92 124 102 Q112 92 100 102 Q88 92 76 102 Q64 92 52 102 Z" fill="#ffb3c1" opacity="0.9" stroke="#ff8fab" stroke-width="3"/><circle cx="86" cy="80" r="4.5" fill="#571f30"/><circle cx="114" cy="80" r="4.5" fill="#571f30"/><path d="M93 92 Q100 97 107 92" stroke="#571f30" stroke-width="3.5" fill="none" stroke-linecap="round"/><ellipse cx="72" cy="90" rx="6" ry="4" fill="#ff7096" opacity="0.7"/><ellipse cx="128" cy="90" rx="6" ry="4" fill="#ff7096" opacity="0.7"/><path d="M158 66 Q166 78 158 84 Q150 78 158 66 Z" fill="#74c0fc"/><path d="M36 60 Q42 70 36 75 Q30 70 36 60 Z" fill="#74c0fc"/><circle cx="100" cy="34" r="10" fill="#ffd43b"/><path d="M100 18 L100 14 M114 24 L117 20 M86 24 L83 20" stroke="#ffd43b" stroke-width="3.5" stroke-linecap="round"/><g transform="translate(36 130) scale(0.6)">' + SPARK + '</g></svg>'
+          },
+          {
+            name: 'Khodam Tikus Berdasi',
+            epithet: 'Eksekutif Muda dari Got',
+            rarity: 'Langka',
+            desc: 'Jangan tertipu tempat tinggalnya di got — tikus ini kariernya cemerlang. Dasi selalu rapi, presentasi selalu siap, dan dia naik jabatan lebih cepat dari siapa pun di kantor. Ambisinya nggak kenal bau.',
+            fact: 'Dia satu-satunya tikus yang punya jadwal meeting. Agenda hari ini: keju premium jam 9, naik jabatan jam 10, menghindari kucing kantor jam 11.',
+            svg: '<svg viewBox="0 0 200 200" role="img" aria-label="Ilustrasi tikus memakai dasi dan membawa koper"><circle cx="100" cy="100" r="88" fill="#e8ecef"/><path d="M148 150 Q182 146 178 118 Q175 96 156 96" stroke="#c98a9a" stroke-width="6" fill="none" stroke-linecap="round"/><ellipse cx="96" cy="118" rx="42" ry="40" fill="#9aa5b1"/><circle cx="96" cy="70" r="28" fill="#9aa5b1"/><circle cx="72" cy="50" r="12" fill="#9aa5b1"/><circle cx="72" cy="50" r="6.5" fill="#ffb3c1"/><circle cx="120" cy="50" r="12" fill="#9aa5b1"/><circle cx="120" cy="50" r="6.5" fill="#ffb3c1"/><ellipse cx="96" cy="82" rx="13" ry="10" fill="#c3ccd4"/><circle cx="96" cy="78" r="4" fill="#e64980"/><path d="M88 88 Q96 93 104 88" stroke="#39424e" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="85" cy="66" r="4.5" fill="#20303a"/><circle cx="107" cy="66" r="4.5" fill="#20303a"/><path d="M76 92 Q58 96 46 90 M76 98 Q60 106 48 104 M116 92 Q134 96 146 90 M116 98 Q132 106 144 104" stroke="#78858f" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M96 96 L88 104 L93 108 L90 132 L96 140 L102 132 L99 108 L104 104 Z" fill="#e03131"/><rect x="126" y="126" width="42" height="30" rx="5" fill="#8a5a2b"/><rect x="138" y="118" width="18" height="10" rx="4" fill="none" stroke="#8a5a2b" stroke-width="3.5"/><path d="M126 138 L168 138" stroke="#6b4423" stroke-width="3"/><g transform="translate(34 44) scale(0.7)">' + SPARK + '</g></svg>'
+          }
+        ];
+
+        KHODAMS.push(
+          {
+            name: 'Khodam Gurita Salah Jurusan',
+            epithet: 'Sarjana yang Nyasar Jalur',
+            rarity: 'Umum',
+            desc: 'Empat tahun kuliah kelautan, lulus-lulus malah kerja di bidang yang nggak ada hubungannya sama sekali. Untung tentakelnya delapan: satu pegang ijazah, sisanya pegang pekerjaan sampingan apa pun yang penting halal.',
+            fact: 'Dia nggak menyesal salah jurusan — katanya justru di situlah dia belajar skill paling penting: pura-pura paham sambil belajar cepat.',
+            svg: '<svg viewBox="0 0 200 200" role="img" aria-label="Ilustrasi gurita memegang buku dan ijazah"><circle cx="100" cy="100" r="88" fill="#e7f5e9"/><path d="M62 108 Q48 128 58 146 M80 116 Q72 138 82 152 M100 118 L100 154 M120 116 Q128 138 118 152 M138 108 Q152 128 142 146" stroke="#e0658a" stroke-width="11" fill="none" stroke-linecap="round"/><path d="M56 96 Q56 44 100 44 Q144 44 144 96 Q144 112 128 112 L72 112 Q56 112 56 96 Z" fill="#f2789f"/><circle cx="78" cy="76" r="4" fill="#d64f7c"/><circle cx="122" cy="66" r="3.4" fill="#d64f7c"/><circle cx="128" cy="88" r="3" fill="#d64f7c"/><circle cx="86" cy="84" r="5" fill="#3d1220"/><circle cx="114" cy="84" r="5" fill="#3d1220"/><path d="M92 98 Q100 94 108 98" stroke="#3d1220" stroke-width="3.5" fill="none" stroke-linecap="round"/><ellipse cx="72" cy="94" rx="6" ry="4" fill="#ffb3c1" opacity="0.9"/><ellipse cx="128" cy="94" rx="6" ry="4" fill="#ffb3c1" opacity="0.9"/><rect x="14" y="118" width="34" height="26" rx="3" fill="#2f7fc1" transform="rotate(-10 31 131)"/><rect x="19" y="123" width="24" height="4" fill="#a5d8ff" transform="rotate(-10 31 131)"/><rect x="152" y="114" width="30" height="38" rx="3" fill="#fffdf8" stroke="#d9c8a9" stroke-width="2" transform="rotate(9 167 133)"/><path d="M159 124 L176 127 M159 133 L176 136" stroke="#c9b48a" stroke-width="3" transform="rotate(9 167 133)"/><text x="160" y="42" font-family="Fredoka, sans-serif" font-weight="700" font-size="22" fill="#d64f7c">?</text><text x="34" y="52" font-family="Fredoka, sans-serif" font-weight="700" font-size="16" fill="#d64f7c">?</text></svg>'
+          },
+          {
+            name: 'Khodam Kura-Kura Kredit Motor',
+            epithet: 'Cicilan Lunas, Gas Pelan',
+            rarity: 'Umum',
+            desc: 'Makhluk paling lambat di jalan, tapi satu-satunya yang kredit motornya nggak pernah telat. Kura-kura ini membuktikan: kecepatan itu relatif, yang penting angsuran jalan terus dan helm selalu diklik.',
+            fact: 'Cicilannya tinggal tiga bulan lagi. Setelah lunas, dia berencana tetap jalan pelan-pelan — bukan karena nggak bisa ngebut, tapi karena sudah terlanjur jadi gaya hidup.',
+            svg: '<svg viewBox="0 0 200 200" role="img" aria-label="Ilustrasi kura-kura naik motor kredit"><circle cx="100" cy="100" r="88" fill="#e3f6fd"/><circle cx="56" cy="152" r="19" fill="#343a40"/><circle cx="56" cy="152" r="8" fill="#adb5bd"/><circle cx="152" cy="152" r="19" fill="#343a40"/><circle cx="152" cy="152" r="8" fill="#adb5bd"/><path d="M56 152 L88 118 L128 118 L152 152 M88 118 L78 152 M104 100 L128 118" stroke="#e03131" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M104 100 L96 92" stroke="#343a40" stroke-width="5" stroke-linecap="round"/><path d="M58 84 Q58 56 92 56 Q118 56 124 78 Q126 92 112 94 L72 94 Q58 94 58 84 Z" fill="#69db7c"/><path d="M72 62 Q80 74 74 88 M92 58 Q98 72 92 92 M110 64 Q114 76 108 90" stroke="#2f9e6e" stroke-width="3" fill="none"/><circle cx="132" cy="86" r="15" fill="#a9c46b"/><path d="M118 80 Q120 64 136 64 Q150 64 150 78 Q138 74 132 78 Q126 74 118 80 Z" fill="#ffd43b" stroke="#e3a008" stroke-width="2.5"/><circle cx="137" cy="85" r="3.6" fill="#26331a"/><path d="M142 94 Q137 97 132 94" stroke="#26331a" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M120 96 Q104 104 98 100" stroke="#a9c46b" stroke-width="7" fill="none" stroke-linecap="round"/><rect x="152" y="30" width="34" height="24" rx="3" fill="#fffdf8" stroke="#d9c8a9" stroke-width="2" transform="rotate(6 169 42)"/><path d="M158 39 L180 41 M158 46 L174 47" stroke="#c9b48a" stroke-width="2.5" transform="rotate(6 169 42)"/><text x="169" y="70" font-family="Nunito, sans-serif" font-weight="800" font-size="8.5" fill="#b2341f" text-anchor="middle">CICILAN</text><g transform="translate(30 44) scale(0.65)">' + SPARK + '</g></svg>'
+          },
+          {
+            name: 'Khodam Semut Bodyguard',
+            epithet: 'Pengawal Pribadi Ukuran Mini',
+            rarity: 'Langka',
+            desc: 'Badannya paling kecil di daftar ini, tapi jangan macam-macam: dia pengawal profesional. Kacamata hitam, earpiece menyala, dan dia siap pasang badan — walau badan yang dipasang ukurannya cuma seujung jari.',
+            fact: 'Dia sudah mengawal tiga remah roti dan satu butir gula sampai tujuan dengan selamat. Rekor pengawalannya bersih, tanpa satu pun insiden — kecuali semut lain yang iri.',
+            svg: '<svg viewBox="0 0 200 200" role="img" aria-label="Ilustrasi semut bodyguard memakai kacamata hitam"><circle cx="100" cy="100" r="88" fill="#eceff3"/><ellipse cx="100" cy="146" rx="26" ry="22" fill="#4a3226"/><ellipse cx="100" cy="116" rx="20" ry="18" fill="#5d4030"/><path d="M88 102 L84 138 M112 102 L116 138" stroke="#3a2415" stroke-width="4" stroke-linecap="round"/><path d="M92 116 L100 128 L108 116 L104 112 L100 118 L96 112 Z" fill="#e03131"/><circle cx="100" cy="78" r="24" fill="#6b4a33"/><path d="M86 58 Q78 40 62 36 M114 58 Q122 40 138 36" stroke="#4a3226" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="74" y="70" width="52" height="15" rx="7.5" fill="#14100d"/><path d="M78 74 L94 74 L90 82 L78 82 Z" fill="#3d4b5c"/><path d="M106 74 L122 74 L122 82 L110 82 Z" fill="#3d4b5c"/><path d="M126 78 Q138 80 136 92" stroke="#14100d" stroke-width="3" fill="none"/><circle cx="136" cy="95" r="3.4" fill="#14100d"/><path d="M92 96 Q100 99 108 96" stroke="#2b1a10" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M78 112 L56 124 M122 112 L144 124 M84 158 L70 176 M116 158 L130 176" stroke="#4a3226" stroke-width="5" stroke-linecap="round"/><path d="M52 46 L66 46 M59 39 L59 53" stroke="#e39a00" stroke-width="3.5" stroke-linecap="round"/><g transform="translate(164 150) scale(0.7)">' + SPARK + '</g></svg>'
+          },
+          {
+            name: 'Khodam Kuda Laut Mabuk Darat',
+            epithet: 'Kapten yang Kehilangan Laut',
+            rarity: 'Legendaris',
+            desc: 'Di laut dia anggun, di darat dia oleng. Kuda laut ini berjalan sempoyongan kayak habis naik kapal 12 jam, padahal kapalnya nggak pernah berangkat. Dunia terasa berputar, tapi dia tetap berdiri — miring, sih.',
+            fact: 'Dia sudah tiga kali mencoba pulang ke laut dan tiga kali nyasar ke akuarium tetangga. Baginya semua air itu rumah, yang penting basah.',
+            svg: '<svg viewBox="0 0 200 200" role="img" aria-label="Ilustrasi kuda laut yang pusing di darat"><circle cx="100" cy="100" r="88" fill="#fff3d6"/><path d="M16 172 Q46 162 76 172 Q106 182 136 172 Q162 164 184 172 L184 190 L16 190 Z" fill="#f2d492"/><path d="M108 30 Q140 38 138 68 Q137 88 124 96 Q140 108 132 128 Q126 146 106 144 Q122 132 114 118 Q106 104 92 110 Q78 116 80 98 Q82 84 94 82 Q80 68 88 50 Q94 34 108 30 Z" fill="#ffa94d"/><path d="M94 82 L76 92 L94 98" fill="#f08c2e"/><path d="M104 44 Q118 52 118 66 M100 108 Q112 112 110 124" stroke="#e07f24" stroke-width="3" fill="none"/><path d="M118 58 Q134 52 136 66 Q128 74 118 70" fill="#ffc078"/><path d="M86 52 L82 40 M96 46 L96 32 M107 48 L112 36" stroke="#e07f24" stroke-width="4" stroke-linecap="round"/><path d="M118 132 Q134 138 132 150" stroke="#ffa94d" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M92 66 L100 74 M100 66 L92 74 M116 84 L124 92 M124 84 L116 92" stroke="#6b3a10" stroke-width="3" stroke-linecap="round"/><path d="M96 128 Q104 124 112 128" stroke="#6b3a10" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M52 52 Q58 44 66 50 Q58 56 52 52 M150 44 Q156 36 164 42 Q156 48 150 44" stroke="#e39a00" stroke-width="3" fill="none"/><circle cx="46" cy="120" r="4" fill="#a5d8ff"/><circle cx="160" cy="110" r="3.2" fill="#a5d8ff"/><g transform="translate(36 160) scale(0.6)">' + SPARK + '</g></svg>'
+          },
+          {
+            name: 'Khodam Burung Hantu Takut Gelap',
+            epithet: 'Penjaga Malam yang Penakut',
+            rarity: 'Langka',
+            desc: 'Ironis tingkat dewa: burung hantu yang takut gelap. Setiap malam dia bertugas sambil membawa senter dan lampu tidur, dan setiap ada bunyi "kresek" sedikit, dia yang pertama terbang. Tapi dia tetap datang tiap malam — itu namanya berani.',
+            fact: 'Dia sudah mencoba terapi: tidur tanpa lampu selama lima menit. Hasilnya, dia sekarang punya tiga lampu tidur cadangan dan satu senter darurat.',
+            svg: '<svg viewBox="0 0 200 200" role="img" aria-label="Ilustrasi burung hantu memegang senter di malam hari"><circle cx="100" cy="100" r="88" fill="#2e3a55"/><path d="M168 30 a13 13 0 1 0 8 24 a16 16 0 1 1 -8 -24 Z" fill="#ffe9a8"/><circle cx="42" cy="42" r="2.4" fill="#ffffff"/><circle cx="160" cy="80" r="2" fill="#ffffff"/><circle cx="30" cy="110" r="2" fill="#ffffff"/><ellipse cx="100" cy="118" rx="42" ry="46" fill="#8a6a45"/><ellipse cx="100" cy="130" rx="27" ry="32" fill="#d9c29a"/><path d="M64 84 Q58 58 82 52 L90 66 M136 84 Q142 58 118 52 L110 66" fill="#8a6a45"/><circle cx="86" cy="96" r="12" fill="#ffffff"/><circle cx="114" cy="96" r="12" fill="#ffffff"/><circle cx="88" cy="98" r="5.5" fill="#1d2436"/><circle cx="112" cy="98" r="5.5" fill="#1d2436"/><path d="M94 112 L106 112 L100 120 Z" fill="#f2a93b"/><path d="M82 126 Q86 122 90 126 M110 126 Q114 122 118 126 M88 142 Q92 138 96 142 M104 142 Q108 138 112 142" stroke="#b08954" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M64 128 Q48 136 50 150" stroke="#8a6a45" stroke-width="9" fill="none" stroke-linecap="round"/><rect x="38" y="146" width="16" height="24" rx="4" fill="#ffd43b" transform="rotate(14 46 158)"/><circle cx="50" cy="146" r="6" fill="#fff3bf"/><path d="M58 152 L86 168 L84 186 L52 172 Z" fill="#ffe066" opacity="0.35"/><path d="M88 168 L88 176 M112 168 L112 176" stroke="#f2a93b" stroke-width="4" stroke-linecap="round"/><path d="M30 178 L170 178" stroke="#5d4a2f" stroke-width="6" stroke-linecap="round"/></svg>'
+          },
+          {
+            name: 'Khodam Pinguin Kepanasan',
+            epithet: 'Penghuni Kutub yang Salah Alamat',
+            rarity: 'Umum',
+            desc: 'Didesain Tuhan buat suhu minus 40, tapi hidupnya malah di negara tropis garis khatulistiwa. Pinguin ini meleleh pelan-pelan tiap hari, kipas angin nggak pernah mati, dan es teh adalah sahabat terbaiknya.',
+            fact: 'Dia sudah mengajukan pindah ke freezer Indomaret tiga kali. Ditolak terus, tapi dia nggak menyerah — sekarang dia nego jadi penjaga pintu bagian minuman dingin.',
+            svg: '<svg viewBox="0 0 200 200" role="img" aria-label="Ilustrasi pinguin kepanasan di bawah matahari"><circle cx="100" cy="100" r="88" fill="#ffe3c2"/><circle cx="164" cy="36" r="15" fill="#ffd43b"/><path d="M164 12 L164 8 M182 22 L185 18 M146 22 L143 18 M186 40 L190 40" stroke="#ffd43b" stroke-width="3.5" stroke-linecap="round"/><ellipse cx="100" cy="118" rx="40" ry="52" fill="#2e3440"/><ellipse cx="100" cy="128" rx="25" ry="38" fill="#ffffff"/><circle cx="100" cy="70" r="24" fill="#2e3440"/><circle cx="91" cy="68" r="4.2" fill="#ffffff"/><circle cx="109" cy="68" r="4.2" fill="#ffffff"/><path d="M93 78 L107 78 L100 86 Z" fill="#f2a93b"/><path d="M104 84 Q108 92 102 94" stroke="#ff8787" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M60 108 Q44 118 48 134 M140 108 Q156 118 152 134" stroke="#2e3440" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M78 170 L96 170 M104 170 L122 170" stroke="#f2a93b" stroke-width="5" stroke-linecap="round"/><path d="M66 52 Q73 62 66 67 Q59 62 66 52 M134 58 Q141 68 134 73 Q127 68 134 58" fill="#74c0fc"/><ellipse cx="100" cy="182" rx="48" ry="7" fill="#a5d8ff" opacity="0.75"/><g transform="translate(30 130) scale(0.65)">' + SPARK + '</g></svg>'
+          },
+          {
+            name: 'Khodam Bekicot Turbo',
+            epithet: 'Yang Tercepat di Antara yang Lambat',
+            rarity: 'Mitologis',
+            desc: 'Legenda jalanan yang nggak pernah terburu-buru — sampai turbonya nyala. Bekicot ini membuktikan kecepatan itu soal momentum: diam lama bukan berarti kalah, bisa jadi dia lagi ngumpulin tenaga buat melesat ninggalin semua orang.',
+            fact: 'Rekornya: mengelilingi satu pot bunga dalam waktu yang membuat siput lain cuma bisa geleng-geleng. Api di knalpotnya asli, bukan editan.',
+            svg: '<svg viewBox="0 0 200 200" role="img" aria-label="Ilustrasi bekicot dengan turbo dan api knalpot"><circle cx="100" cy="100" r="88" fill="#e7f5e9"/><path d="M8 84 Q22 78 34 84 M4 108 Q18 102 32 108" stroke="#74c0fc" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M52 148 Q52 118 84 118 L128 118 Q158 118 158 140 Q158 152 144 152 L66 152 Q52 152 52 148 Z" fill="#ffd43b"/><path d="M140 122 Q168 108 172 88" stroke="#ffd43b" stroke-width="13" fill="none" stroke-linecap="round"/><path d="M166 74 Q158 54 168 44 M178 78 Q174 58 186 50" stroke="#e3a008" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="168" cy="42" r="6" fill="#ffd43b"/><circle cx="186" cy="48" r="6" fill="#ffd43b"/><circle cx="100" cy="92" r="42" fill="#e8590c"/><path d="M100 62 a30 30 0 1 1 -21 51 a21 21 0 1 0 15 -36 a13 13 0 1 1 -9 24" fill="none" stroke="#c24e02" stroke-width="6" stroke-linecap="round"/><circle cx="160" cy="92" r="11" fill="none" stroke="#343a40" stroke-width="3.5"/><circle cx="160" cy="92" r="4" fill="#343a40"/><path d="M52 138 L34 138" stroke="#868e96" stroke-width="6" stroke-linecap="round"/><path d="M36 128 Q22 132 30 140 Q20 146 32 150 Q44 152 40 140 Q46 132 36 128 Z" fill="#ff922b"/><path d="M34 134 Q28 138 32 142 Q26 146 34 148" fill="#ffd43b"/><path d="M70 152 L66 162 M96 152 L96 162 M126 152 L130 162" stroke="#e3a008" stroke-width="4" stroke-linecap="round"/><g transform="translate(168 168) scale(0.7)">' + SPARK + '</g></svg>'
+          }
+        );
+
+        /* ---------- deterministic khodam math ---------- */
+        function normalize(text) {
+          return text.trim().toLowerCase().replace(/\s+/g, ' ');
+        }
+        function hashStr(str, seed) {
+          var h = seed || 5381;
+          for (var i = 0; i < str.length; i++) {
+            h = ((h << 5) + h + str.charCodeAt(i)) >>> 0;
+            h = (h * 33) >>> 0;
+          }
+          return h;
+        }
+        function scoreFor(key, seed, min, max) {
+          return min + (hashStr(key, seed) % (max - min + 1));
+        }
+
+        /* ---------- elements ---------- */
+        var form = document.getElementById('khodamForm');
+        var nameInput = document.getElementById('nameInput');
+        var birthInput = document.getElementById('birthInput');
+        var fieldName = document.getElementById('fieldName');
+        var fieldBirth = document.getElementById('fieldBirth');
+        var submitBtn = document.getElementById('submitBtn');
+        var submitText = document.getElementById('submitText');
+        var errorMsg = document.getElementById('errorMsg');
+        var result = document.getElementById('result');
+        var forWho = document.getElementById('forWho');
+        var portrait = document.getElementById('portrait');
+        var rarityChip = document.getElementById('rarityChip');
+        var khodamNameEl = document.getElementById('khodamName');
+        var khodamEpithetEl = document.getElementById('khodamEpithet');
+        var khodamDescEl = document.getElementById('khodamDesc');
+        var zodiacGlyph = document.getElementById('zodiacGlyph');
+        var zodiacName = document.getElementById('zodiacName');
+        var zodiacDates = document.getElementById('zodiacDates');
+        var zodiacTrait = document.getElementById('zodiacTrait');
+        var factText = document.getElementById('factText');
+        var copiedNote = document.getElementById('copiedNote');
+        var lastResult = null;
+        var busy = false;
+
+        var today = new Date();
+        var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+        birthInput.max = today.getFullYear() + '-' + pad(today.getMonth() + 1) + '-' + pad(today.getDate());
+
+        var SCAN_LINES = ['Memanggil khodam…', 'Membaca tanggal lahirmu…', 'Mengintip alam gaib…', 'Khodamnya lagi OTW…'];
+
+        function burstStars() {
+          if (reduced) return;
+          for (var i = 0; i < 10; i++) {
+            var holder = document.createElement('div');
+            holder.innerHTML = STAR;
+            var s = holder.firstChild;
+            s.classList.add('burst-star');
+            var size = 12 + Math.random() * 18;
+            s.style.width = size + 'px';
+            s.style.left = (20 + Math.random() * 60) + '%';
+            s.style.top = '40px';
+            result.appendChild(s);
+            var dx = (Math.random() - 0.5) * 260;
+            var dy = -(50 + Math.random() * 170);
+            var rot = (Math.random() - 0.5) * 120;
+            s.animate([
+              { transform: 'translate(0,0) rotate(0deg)', opacity: 1 },
+              { transform: 'translate(' + dx + 'px,' + dy + 'px) rotate(' + rot + 'deg)', opacity: 0 }
+            ], { duration: 1100 + Math.random() * 700, easing: 'cubic-bezier(0.22,1,0.36,1)' }).onfinish = (function (el) {
+              return function () { el.remove(); };
+            })(s);
+          }
+        }
+
+        function showResult(personName, khodam, zodiac, key) {
+          var power = scoreFor(key, 7919, 5, 100);
+          var absurd = scoreFor(key, 104729, 40, 100);
+          var loyal = scoreFor(key, 31, 5, 100);
+
+          lastResult = { person: personName, khodam: khodam, zodiac: zodiac };
+
+          forWho.textContent = personName;
+          portrait.innerHTML = khodam.svg;
+          rarityChip.textContent = 'Tingkat Kelangkaan: ' + khodam.rarity;
+          khodamNameEl.textContent = khodam.name;
+          khodamEpithetEl.textContent = '"' + khodam.epithet + '"';
+          khodamDescEl.textContent = khodam.desc;
+          zodiacGlyph.textContent = zodiac.glyph;
+          zodiacName.textContent = zodiac.name;
+          zodiacDates.textContent = '(' + zodiac.dates + ')';
+          zodiacTrait.textContent = zodiac.trait;
+          factText.textContent = khodam.fact;
+          copiedNote.textContent = '';
+
+          result.classList.remove('show');
+          void result.offsetWidth;
+          result.classList.add('show');
+
+          var bars = [
+            { bar: document.getElementById('barPower'), val: document.getElementById('valPower'), n: power },
+            { bar: document.getElementById('barAbsurd'), val: document.getElementById('valAbsurd'), n: absurd },
+            { bar: document.getElementById('barLoyal'), val: document.getElementById('valLoyal'), n: loyal }
+          ];
+          bars.forEach(function (row) { row.bar.style.width = '0%'; row.val.textContent = '0%'; });
+          setTimeout(function () {
+            bars.forEach(function (row) {
+              row.bar.style.width = row.n + '%';
+              if (reduced) { row.val.textContent = row.n + '%'; return; }
+              var start = null;
+              function step(ts) {
+                if (!start) start = ts;
+                var p = Math.min((ts - start) / 900, 1);
+                var eased = 1 - Math.pow(1 - p, 3);
+                row.val.textContent = Math.round(eased * row.n) + '%';
+                if (p < 1) requestAnimationFrame(step);
+              }
+              requestAnimationFrame(step);
+            });
+          }, reduced ? 0 : 150);
+
+          burstStars();
+          result.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' });
+        }
+
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          if (busy) return;
+          var person = nameInput.value.trim();
+          var birth = birthInput.value;
+          var ok = true;
+          [ [fieldName, person], [fieldBirth, birth] ].forEach(function (pair) {
+            pair[0].classList.remove('shake');
+            if (!pair[1]) {
+              ok = false;
+              void pair[0].offsetWidth;
+              pair[0].classList.add('shake');
+            }
+          });
+          if (!ok) {
+            errorMsg.textContent = 'Isi dulu nama sama tanggal lahirmu — khodamnya nggak bisa datang kalau nggak dipanggil lengkap.';
+            errorMsg.classList.add('show');
+            return;
+          }
+          errorMsg.classList.remove('show');
+          busy = true;
+          submitBtn.disabled = true;
+          submitBtn.classList.add('pulsing');
+
+          var key = normalize(person) + '|' + birth;
+          var khodam = KHODAMS[hashStr(key, 5381) % KHODAMS.length];
+          var parts = birth.split('-');
+          var zodiac = zodiacFor(parseInt(parts[1], 10), parseInt(parts[2], 10));
+
+          function finish() {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('pulsing');
+            submitText.textContent = 'Panggil Lagi';
+            busy = false;
+            showResult(person, khodam, zodiac, key);
+          }
+
+          if (reduced) {
+            submitText.textContent = 'Memanggil…';
+            setTimeout(finish, 300);
+            return;
+          }
+
+          var idx = 0;
+          submitText.textContent = SCAN_LINES[0];
+          var iv = setInterval(function () {
+            idx++;
+            if (idx < SCAN_LINES.length) {
+              submitText.textContent = SCAN_LINES[idx];
+            } else {
+              clearInterval(iv);
+              finish();
+            }
+          }, 420);
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', function () {
+          result.classList.remove('show');
+          nameInput.value = '';
+          birthInput.value = '';
+          submitText.textContent = 'Panggil Khodamku';
+          copiedNote.textContent = '';
+          lastResult = null;
+          nameInput.focus();
+          window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+        });
+
+        document.getElementById('copyBtn').addEventListener('click', function () {
+          if (!lastResult) return;
+          var text = 'Cek Khodam: khodam penjaga ' + lastResult.person + ' adalah ' + lastResult.khodam.name + ' ("' + lastResult.khodam.epithet + '", kelangkaan: ' + lastResult.khodam.rarity + '). Zodiak ' + lastResult.person + ': ' + lastResult.zodiac.name + ' (' + lastResult.zodiac.dates + '). ' + lastResult.khodam.desc;
+          function done() { copiedNote.textContent = 'Hasilnya udah disalin — tinggal pamerin ke teman-temanmu.'; }
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(done, function () { copiedNote.textContent = 'Yah, gagal menyalin. Screenshot aja hasilnya!'; });
+          } else {
+            copiedNote.textContent = 'Browser kamu nggak mendukung salin otomatis — screenshot aja hasilnya!';
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
